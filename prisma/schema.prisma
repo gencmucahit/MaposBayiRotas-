@@ -2,9 +2,15 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client"
-  output        = "../src/generated/prisma"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  // "Rust-free" sorgu derleyicisi: platforma özel native query engine
+  // binary'sine (libquery_engine-*.so.node) hiç ihtiyaç duymaz, bunun yerine
+  // @prisma/client içine gömülü WASM tabanlı bir sorgu derleyici kullanır.
+  // Vercel gibi serverless ortamlarda "could not locate the Query Engine"
+  // hatasının kökten önüne geçer. Driver adapter (@prisma/adapter-pg,
+  // src/lib/prisma.ts) kullanımını zorunlu kılar.
+  engineType = "client"
 }
 
 datasource db {
