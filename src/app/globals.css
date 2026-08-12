@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Harita pinleri ve pin kümesi rozetleri: Leaflet'in varsayılan divIcon
+   kutusunu (beyaz arka plan + çerçeve) kaldırıp kendi ikonlarımızın
+   görünmesini sağlar. */
+.leaflet-div-icon.mapmarker-pin,
+.leaflet-div-icon.mapmarker-cluster {
+  background: transparent;
+  border: none;
+}

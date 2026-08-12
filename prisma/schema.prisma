@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BusinessStatus {
+  ACTIVE
+  POTENTIAL
+  INACTIVE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+
+  notes  Note[]
+  routes Route[]
+}
+
+model Business {
+  id        String         @id @default(cuid())
+  name      String
+  address   String?
+  phone     String?
+  latitude  Float
+  longitude Float
+  status    BusinessStatus @default(POTENTIAL)
+
+  // İletişim / ziyaret
+  contactName String?
+
+  // Adisyon sistem detayları
+  installDate   DateTime?
+  planType      String?
+  licenseStatus String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes      Note[]
+  routeStops RouteStop[]
+
+  @@index([status])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId String?
+
+  @@index([businessId])
+}
+
+model Route {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+
+  stops RouteStop[]
+}
+
+model RouteStop {
+  id      String @id @default(cuid())
+  order   Int
+
+  route   Route  @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  routeId String
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  businessId String
+
+  @@index([routeId])
+}
