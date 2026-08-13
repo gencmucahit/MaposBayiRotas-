@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const links = [
+const allLinks = [
   { href: "/", label: "Harita" },
   { href: "/isletmeler", label: "İşletmeler" },
   { href: "/rota", label: "Rota Oluştur" },
 ];
 
-export function NavBar() {
+export function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
   const pathname = usePathname();
+  const links = isAuthenticated
+    ? allLinks
+    : allLinks.filter((link) => link.href === "/");
 
   return (
     <nav className="flex flex-nowrap items-center gap-1">

@@ -27,6 +27,7 @@ export interface MapViewProps {
   cluster?: boolean;
   renderPopupHtml?: (marker: MapMarker) => string;
   focusTarget?: MapFocusTarget | null;
+  popupTopInset?: number;
 }
 
 export function MapView(props: MapViewProps) {

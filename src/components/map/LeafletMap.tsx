@@ -9,6 +9,7 @@ import {
   Circle,
   Popup,
   Polyline,
+  ZoomControl,
   useMap,
   useMapEvents,
 } from "react-leaflet";
@@ -126,11 +127,13 @@ function Marker({
   isSelected,
   onMarkerClick,
   renderPopup,
+  popupAutoPanPaddingTopLeft,
 }: {
   marker: MapMarker;
   isSelected: boolean;
   onMarkerClick?: (id: string) => void;
   renderPopup?: (marker: MapMarker) => React.ReactNode;
+  popupAutoPanPaddingTopLeft: L.PointExpression;
 }) {
   const ref = useRef<L.Marker | null>(null);
   const isPermanent = marker.orderLabel !== undefined;
@@ -155,9 +158,13 @@ function Marker({
       }
     >
       {renderPopup ? (
-        <Popup>{renderPopup(marker)}</Popup>
+        <Popup autoPanPaddingTopLeft={popupAutoPanPaddingTopLeft}>
+          {renderPopup(marker)}
+        </Popup>
       ) : (
-        <Popup>{marker.name}</Popup>
+        <Popup autoPanPaddingTopLeft={popupAutoPanPaddingTopLeft}>
+          {marker.name}
+        </Popup>
       )}
     </RLMarker>
   );
@@ -173,11 +180,13 @@ function ClusterLayer({
   onMarkerClick,
   renderPopupHtml,
   focusTarget,
+  popupAutoPanPaddingTopLeft,
 }: {
   markers: MapMarker[];
   onMarkerClick?: (id: string) => void;
   renderPopupHtml?: (marker: MapMarker) => string;
   focusTarget?: MapFocusTarget | null;
+  popupAutoPanPaddingTopLeft: L.PointExpression;
 }) {
   const map = useMap();
   const groupRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -235,10 +244,12 @@ function ClusterLayer({
       }
 
       if (renderPopupHtml) {
-        layer.bindPopup(renderPopupHtml(marker));
+        layer.bindPopup(renderPopupHtml(marker), {
+          autoPanPaddingTopLeft: popupAutoPanPaddingTopLeft,
+        });
       }
     }
-  }, [markers, onMarkerClick, renderPopupHtml]);
+  }, [markers, onMarkerClick, renderPopupHtml, popupAutoPanPaddingTopLeft]);
 
   useEffect(() => {
     if (!focusTarget) return;
@@ -379,6 +390,10 @@ interface LeafletMapProps {
   /** cluster=true iken belirli bir işletmeye odaklanmak (gerekirse kümeyi
    *  açıp yakınlaştırmak) için kullanılır. */
   focusTarget?: MapFocusTarget | null;
+  /** Haritanın üzerinde yüzen bir panel varsa (örn. Harita sayfasındaki
+   *  arama kutusu), açılan popup'ların onun altında kalıp gizlenmemesi için
+   *  Leaflet'in otomatik kaydırmasına eklenecek üst boşluk (piksel). */
+  popupTopInset?: number;
 }
 
 export default function LeafletMap({
@@ -394,7 +409,9 @@ export default function LeafletMap({
   cluster = false,
   renderPopupHtml,
   focusTarget,
+  popupTopInset = 10,
 }: LeafletMapProps) {
+  const popupAutoPanPaddingTopLeft: L.PointExpression = [10, popupTopInset];
   const initialCenter = useMemo<LatLngExpression>(() => {
     if (singleMarkerCenter) return singleMarkerCenter;
     if (markers.length > 0) return [markers[0].latitude, markers[0].longitude];
@@ -412,11 +429,15 @@ export default function LeafletMap({
       zoom={markers.length > 0 ? 12 : 6}
       style={{ height, width: "100%" }}
       scrollWheelZoom
+      zoomControl={false}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> katkıda bulunanlar'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      {/* Sol üstte artık yüzen arama/filtre paneli olabildiği için zoom
+          düğmelerini sağ üste taşıyoruz ki üst üste binmesinler. */}
+      <ZoomControl position="topright" />
       <ClickHandler onMapClick={onMapClick} />
       {fitToMarkers && <FitToMarkers markers={markers} />}
       {showUserLocation && <LocateControl />}
@@ -432,6 +453,7 @@ export default function LeafletMap({
           onMarkerClick={onMarkerClick}
           renderPopupHtml={renderPopupHtml}
           focusTarget={focusTarget}
+          popupAutoPanPaddingTopLeft={popupAutoPanPaddingTopLeft}
         />
       ) : (
         markers.map((marker) => (
@@ -441,6 +463,7 @@ export default function LeafletMap({
             isSelected={selectedIds?.has(marker.id) ?? false}
             onMarkerClick={onMarkerClick}
             renderPopup={renderPopup}
+            popupAutoPanPaddingTopLeft={popupAutoPanPaddingTopLeft}
           />
         ))
       )}

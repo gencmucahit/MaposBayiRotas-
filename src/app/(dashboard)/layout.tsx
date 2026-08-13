@@ -23,7 +23,7 @@ export default async function DashboardLayout({
             <span className="hidden sm:inline">Mapos Bayi Rotası</span>
           </span>
           <div className="min-w-0 overflow-x-auto">
-            <NavBar />
+            <NavBar isAuthenticated={Boolean(session)} />
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
