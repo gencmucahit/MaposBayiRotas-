@@ -12,12 +12,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Not: create-next-app'in varsayılan karanlık mod desteği kasıtlı olarak
+   kaldırıldı. Uygulamanın tamamı (kartlar, tablolar, yazı renkleri) sadece
+   açık tema için tasarlandı; prefers-color-scheme: dark burada aktif
+   olursa body arka planı koyulaşıp bileşenler üzerindeki koyu renkli
+   yazılarla okunmaz hale geliyordu. */
 
 body {
   background: var(--background);
