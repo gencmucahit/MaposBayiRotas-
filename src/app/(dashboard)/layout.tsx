@@ -1,17 +1,18 @@
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { NavBar } from "@/components/NavBar";
 import { LogoutButton } from "@/components/LogoutButton";
 
+// Bu layout artık herkese açık: Harita (/) sayfası giriş yapmadan
+// görüntülenebilir. İşletme ekleme/düzenleme/silme ve İşletmeler/Rota
+// Oluştur sayfaları kendi layout'larında (isletmeler/layout.tsx,
+// rota/layout.tsx) ve server action'larda ayrıca korunuyor.
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session) {
-    redirect("/login");
-  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -26,10 +27,21 @@ export default async function DashboardLayout({
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <span className="hidden text-sm text-slate-500 sm:inline">
-            {session.user?.email}
-          </span>
-          <LogoutButton />
+          {session ? (
+            <>
+              <span className="hidden text-sm text-slate-500 sm:inline">
+                {session.user?.email}
+              </span>
+              <LogoutButton />
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
+            >
+              Giriş yap
+            </Link>
+          )}
         </div>
       </header>
       <main className="flex-1">{children}</main>

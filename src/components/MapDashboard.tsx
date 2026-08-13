@@ -34,7 +34,13 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#39;");
 }
 
-export function MapDashboard({ businesses }: { businesses: Business[] }) {
+export function MapDashboard({
+  businesses,
+  isAuthenticated,
+}: {
+  businesses: Business[];
+  isAuthenticated: boolean;
+}) {
   const [search, setSearch] = useState("");
   const [activeStatuses, setActiveStatuses] = useState<Set<BusinessStatus>>(
     new Set(BUSINESS_STATUS_OPTIONS)
@@ -95,8 +101,12 @@ export function MapDashboard({ businesses }: { businesses: Business[] }) {
         `<p style="color:#64748b;margin:0 0 4px">${escapeHtml(business.phone)}</p>`
       );
     }
+    if (isAuthenticated) {
+      lines.push(
+        `<a href="/isletmeler/${marker.id}" style="color:#047857;font-weight:600;text-decoration:none">Detayı gör →</a>`
+      );
+    }
     lines.push(
-      `<a href="/isletmeler/${marker.id}" style="color:#047857;font-weight:600;text-decoration:none">Detayı gör →</a>`,
       `<div style="display:flex;gap:6px;margin-top:6px">`,
       `<a href="${googleMapsDirectionsUrl(marker.latitude, marker.longitude)}" target="_blank" rel="noopener noreferrer" style="flex:1;background:#4285F4;color:#fff;text-align:center;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Google</a>`,
       `<a href="${yandexNaviUrl(marker.latitude, marker.longitude)}" style="flex:1;background:#FFCC00;color:#000;text-align:center;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Yandex</a>`,
@@ -140,12 +150,14 @@ export function MapDashboard({ businesses }: { businesses: Business[] }) {
               );
             })}
           </div>
-          <Link
-            href="/isletmeler/yeni"
-            className="rounded-lg bg-emerald-600 px-3 py-2 text-center text-sm font-semibold text-white transition hover:bg-emerald-700"
-          >
-            + Yeni işletme ekle
-          </Link>
+          {isAuthenticated && (
+            <Link
+              href="/isletmeler/yeni"
+              className="rounded-lg bg-emerald-600 px-3 py-2 text-center text-sm font-semibold text-white transition hover:bg-emerald-700"
+            >
+              + Yeni işletme ekle
+            </Link>
+          )}
         </div>
         <div className="flex-1 overflow-y-auto">
           {filtered.length === 0 && (
