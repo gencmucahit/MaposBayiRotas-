@@ -1,7 +1,11 @@
 import bcrypt from "bcryptjs";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
-const prisma = new PrismaClient();
+// engineType = "client" (Rust-free Prisma), bir driver adapter olmadan
+// başlatılamıyor — src/lib/prisma.ts'deki üretim client'ıyla aynı desen.
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 const DEMO_EMAIL = "mucahit@gencmucahit.com";
 const DEMO_PASSWORD = "customermap123";
