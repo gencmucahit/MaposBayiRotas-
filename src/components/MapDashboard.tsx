@@ -146,29 +146,31 @@ export function MapDashboard({
               placeholder="İşletme adı veya adres ara…"
               className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
-            <div className="flex flex-wrap gap-2">
-              {BUSINESS_STATUS_OPTIONS.map((status) => {
-                const isActive = activeStatuses.has(status);
-                return (
-                  <button
-                    key={status}
-                    type="button"
-                    onClick={() => toggleStatus(status)}
-                    className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition ${
-                      isActive
-                        ? "border-transparent bg-slate-900 text-white"
-                        : "border-slate-300 text-slate-500"
-                    }`}
-                  >
-                    <span
-                      className="h-2 w-2 rounded-full"
-                      style={{ backgroundColor: BUSINESS_STATUS_COLORS[status] }}
-                    />
-                    {BUSINESS_STATUS_LABELS[status]}
-                  </button>
-                );
-              })}
-            </div>
+            {isAuthenticated && (
+              <div className="flex flex-wrap gap-2">
+                {BUSINESS_STATUS_OPTIONS.map((status) => {
+                  const isActive = activeStatuses.has(status);
+                  return (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => toggleStatus(status)}
+                      className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition ${
+                        isActive
+                          ? "border-transparent bg-slate-900 text-white"
+                          : "border-slate-300 text-slate-500"
+                      }`}
+                    >
+                      <span
+                        className="h-2 w-2 rounded-full"
+                        style={{ backgroundColor: BUSINESS_STATUS_COLORS[status] }}
+                      />
+                      {BUSINESS_STATUS_LABELS[status]}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             {isAuthenticated && (
               <Link
                 href="/isletmeler/yeni"
