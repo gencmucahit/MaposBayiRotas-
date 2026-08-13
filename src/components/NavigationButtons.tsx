@@ -1,8 +1,9 @@
-import { googleMapsDirectionsUrl, yandexNaviUrl } from "@/lib/navigation-links";
+import { googleMapsDirectionsUrl } from "@/lib/navigation-links";
 
 /**
- * Popup içeriklerinde kullanılan "Google" / "Yandex" navigasyon butonları.
- * Tıklanınca ilgili uygulamada (veya web'de) bu koordinata yol tarifi başlar.
+ * Popup içeriklerinde kullanılan "Yol Tarifi" navigasyon butonu.
+ * Tıklanınca Google Haritalar'da (uygulama veya web) bu koordinata yol
+ * tarifi başlar.
  */
 export function NavigationButtons({
   latitude,
@@ -20,14 +21,7 @@ export function NavigationButtons({
         onClick={(e) => e.stopPropagation()}
         className="flex-1 rounded-md bg-[#4285F4] px-2 py-1 text-center text-xs font-semibold text-white transition hover:opacity-90"
       >
-        Google
-      </a>
-      <a
-        href={yandexNaviUrl(latitude, longitude)}
-        onClick={(e) => e.stopPropagation()}
-        className="flex-1 rounded-md bg-[#FFCC00] px-2 py-1 text-center text-xs font-semibold text-black transition hover:opacity-90"
-      >
-        Yandex
+        Yol Tarifi
       </a>
     </div>
   );

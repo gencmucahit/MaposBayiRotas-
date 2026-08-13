@@ -13,7 +13,7 @@ import {
   BUSINESS_STATUS_OPTIONS,
 } from "@/lib/business";
 import type { BusinessStatus } from "@/generated/prisma/client";
-import { googleMapsDirectionsUrl, yandexNaviUrl } from "@/lib/navigation-links";
+import { googleMapsDirectionsUrl } from "@/lib/navigation-links";
 
 type Business = {
   id: string;
@@ -108,8 +108,7 @@ export function MapDashboard({
     }
     lines.push(
       `<div style="display:flex;gap:6px;margin-top:6px">`,
-      `<a href="${googleMapsDirectionsUrl(marker.latitude, marker.longitude)}" target="_blank" rel="noopener noreferrer" style="flex:1;background:#4285F4;color:#fff;text-align:center;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Google</a>`,
-      `<a href="${yandexNaviUrl(marker.latitude, marker.longitude)}" style="flex:1;background:#FFCC00;color:#000;text-align:center;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Yandex</a>`,
+      `<a href="${googleMapsDirectionsUrl(marker.latitude, marker.longitude)}" target="_blank" rel="noopener noreferrer" style="flex:1;background:#4285F4;color:#fff;text-align:center;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Yol Tarifi</a>`,
       `</div>`,
       `</div>`
     );
