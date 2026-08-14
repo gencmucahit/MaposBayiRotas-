@@ -1,7 +1,8 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { NavBar } from "@/components/NavBar";
 import { LogoutButton } from "@/components/LogoutButton";
+import { LoginModal } from "@/components/LoginModal";
 
 // Bu layout artık herkese açık: Harita (/) sayfası giriş yapmadan
 // görüntülenebilir. İşletme ekleme/düzenleme/silme ve İşletmeler/Rota
@@ -35,12 +36,9 @@ export default async function DashboardLayout({
               <LogoutButton />
             </>
           ) : (
-            <Link
-              href="/login"
-              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
-            >
-              Giriş yap
-            </Link>
+            <Suspense fallback={null}>
+              <LoginModal />
+            </Suspense>
           )}
         </div>
       </header>

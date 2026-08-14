@@ -1,24 +1,11 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { LoginForm } from "@/components/LoginForm";
 
+// Ayrı bir giriş sayfası artık yok — giriş, Harita sayfasında bir popup
+// (bkz. LoginModal) olarak gösteriliyor. Bu route, eski /login linklerini
+// (yer imleri, NextAuth'un pages.signIn ayarı vb.) doğru yere yönlendirmek
+// için korunuyor.
 export default async function LoginPage() {
   const session = await auth();
-  if (session) {
-    redirect("/");
-  }
-
-  return (
-    <div className="flex min-h-screen flex-1 items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <div className="mb-6 text-center">
-          <h1 className="text-xl font-bold text-slate-900">Mapos Bayi Rotası</h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Saha ekibi girişi
-          </p>
-        </div>
-        <LoginForm />
-      </div>
-    </div>
-  );
+  redirect(session ? "/" : "/?login=1");
 }

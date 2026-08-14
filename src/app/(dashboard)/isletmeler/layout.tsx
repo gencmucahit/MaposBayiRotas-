@@ -10,7 +10,9 @@ export default async function IsletmelerLayout({
 }) {
   const session = await auth();
   if (!session) {
-    redirect("/login");
+    // Ayrı bir /login sayfası yok; Harita sayfasına giriş popup'ı açık
+    // şekilde yönlendiriyoruz.
+    redirect("/?login=1");
   }
 
   return children;
