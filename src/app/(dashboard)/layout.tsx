@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { NavBar } from "@/components/NavBar";
 import { LogoutButton } from "@/components/LogoutButton";
 import { LoginModal } from "@/components/LoginModal";
+import { NotificationsToggle } from "@/components/NotificationsToggle";
 
 // Bu layout artık herkese açık: Harita (/) sayfası giriş yapmadan
 // görüntülenebilir. İşletme ekleme/düzenleme/silme ve İşletmeler/Rota
@@ -30,6 +31,7 @@ export default async function DashboardLayout({
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {session ? (
             <>
+              <NotificationsToggle />
               <span className="hidden text-sm text-slate-500 sm:inline">
                 {session.user?.email}
               </span>

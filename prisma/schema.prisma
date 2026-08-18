@@ -31,8 +31,23 @@ model User {
   name         String?
   createdAt    DateTime @default(now())
 
-  notes  Note[]
-  routes Route[]
+  notes             Note[]
+  routes            Route[]
+  pushSubscriptions PushSubscription[]
+}
+
+// Tarayıcı push bildirimleri için kaydedilen cihaz abonelikleri. Yeni bir
+// işletme eklendiğinde (bkz. actions/business.ts) buradaki tüm kayıtlara
+// bildirim gönderilir.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
 }
 
 model Business {

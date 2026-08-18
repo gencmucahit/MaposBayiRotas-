@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { businessApiSchema } from "@/lib/validation";
 import { emptyToNull } from "@/lib/form-utils";
 import { isValidApiKey } from "@/lib/api-key";
+import { notifyAllDevices } from "@/lib/push";
 
 function unauthorized() {
   return NextResponse.json(
@@ -93,6 +94,14 @@ export async function POST(request: Request) {
 
   revalidatePath("/");
   revalidatePath("/isletmeler");
+
+  await notifyAllDevices({
+    title: "Yeni işletme eklendi",
+    body: business.name,
+    url: `/isletmeler/${business.id}`,
+  }).catch((err) => {
+    console.error("Push bildirimi gönderilemedi:", err);
+  });
 
   return NextResponse.json({ data: business }, { status: 201 });
 }

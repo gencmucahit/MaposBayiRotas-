@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { businessSchema } from "@/lib/validation";
 import { emptyToNull } from "@/lib/form-utils";
+import { notifyAllDevices } from "@/lib/push";
 
 export type BusinessFormState =
   | {
@@ -55,6 +56,16 @@ export async function createBusiness(
 
   revalidatePath("/");
   revalidatePath("/isletmeler");
+
+  // Bildirim gönderimi başarısız olsa bile işletme eklemeyi engellemesin.
+  await notifyAllDevices({
+    title: "Yeni işletme eklendi",
+    body: business.name,
+    url: `/isletmeler/${business.id}`,
+  }).catch((err) => {
+    console.error("Push bildirimi gönderilemedi:", err);
+  });
+
   redirect(`/isletmeler/${business.id}`);
 }
 
