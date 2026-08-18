@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   MapView,
@@ -25,6 +25,8 @@ type Business = {
   status: BusinessStatus;
 };
 
+const CLUSTER_PREF_KEY = "mapos-cluster-enabled";
+
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, "&amp;")
@@ -47,6 +49,27 @@ export function MapDashboard({
   );
   const [focusTarget, setFocusTarget] = useState<MapFocusTarget | null>(null);
   const focusNonceRef = useRef(0);
+  const [clusterEnabled, setClusterEnabled] = useState(true);
+  const isFirstClusterWrite = useRef(true);
+
+  // Sayfa yüklendiğinde daha önce kaydedilmiş bir tercih varsa uygula.
+  // Senkron efekt gövdesinde doğrudan setState çağırmamak için
+  // (bkz. react-hooks/set-state-in-effect) bir mikro görev turuna erteliyoruz.
+  useEffect(() => {
+    const stored = window.localStorage.getItem(CLUSTER_PREF_KEY);
+    if (stored === null) return;
+    const value = stored === "1";
+    queueMicrotask(() => setClusterEnabled(value));
+  }, []);
+
+  // Tercih değiştikçe (ilk render hariç) kaydet.
+  useEffect(() => {
+    if (isFirstClusterWrite.current) {
+      isFirstClusterWrite.current = false;
+      return;
+    }
+    window.localStorage.setItem(CLUSTER_PREF_KEY, clusterEnabled ? "1" : "0");
+  }, [clusterEnabled]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -128,7 +151,7 @@ export function MapDashboard({
       <MapView
         markers={markers}
         showUserLocation
-        cluster
+        cluster={clusterEnabled}
         renderPopupHtml={buildPopupHtml}
         focusTarget={focusTarget}
         popupTopInset={210}
@@ -146,6 +169,26 @@ export function MapDashboard({
               placeholder="İşletme adı veya adres ara…"
               className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             />
+            <button
+              type="button"
+              role="switch"
+              aria-checked={clusterEnabled}
+              onClick={() => setClusterEnabled((v) => !v)}
+              className="flex items-center justify-between gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            >
+              <span>Pinleri grupla</span>
+              <span
+                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
+                  clusterEnabled ? "bg-emerald-600" : "bg-slate-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                    clusterEnabled ? "translate-x-4" : "translate-x-0.5"
+                  }`}
+                />
+              </span>
+            </button>
             {isAuthenticated && (
               <div className="flex flex-wrap gap-2">
                 {BUSINESS_STATUS_OPTIONS.map((status) => {
