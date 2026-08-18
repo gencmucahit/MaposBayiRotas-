@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 const allLinks = [
   { href: "/", label: "Harita" },
   { href: "/isletmeler", label: "İşletmeler" },
-  { href: "/rota", label: "Rota Oluştur" },
 ];
 
 export function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {

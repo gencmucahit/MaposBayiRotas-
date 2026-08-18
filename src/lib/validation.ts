@@ -34,10 +34,3 @@ export const businessApiSchema = businessSchema.extend({
 export const noteSchema = z.object({
   content: z.string().min(1, "Not boş olamaz"),
 });
-
-export const routeSchema = z.object({
-  name: z.string().min(2, "Rota adı en az 2 karakter olmalı"),
-  businessIds: z
-    .array(z.string())
-    .min(2, "Rota için en az 2 işletme seçmelisiniz"),
-});
