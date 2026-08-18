@@ -29,7 +29,10 @@ self.addEventListener("push", (event) => {
   const options = {
     body: data.body || "",
     icon: "/icons/192",
-    badge: "/icons/192",
+    // Android durum çubuğu badge'i sadece şeffaflık kanalını siluet olarak
+    // kullanır; /icons/192 gibi dolu renkli bir ikon burada beyaz bir kare
+    // gibi görünür. /icons/badge şeffaf arka planlı, sadece monokrom.
+    badge: "/icons/badge",
     data: { url: data.url || "/" },
   };
 
