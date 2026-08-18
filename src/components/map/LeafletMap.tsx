@@ -29,6 +29,9 @@ import { useGeolocation } from "@/lib/use-geolocation";
 // Durum rengine göre boyanmış, gölgeli, klasik "damla" biçiminde bir pin
 // ikonu üretir. Leaflet'in varsayılan divIcon kutusunu değil, kendi SVG'imizi
 // kullanıyoruz — böylece pinler harita üzerinde net ve okunaklı görünür.
+// Ortadaki beyaz "M" harfi, uygulama logosuyla (yeşil pin + beyaz M) aynı
+// kimliği taşır; tek fark, logodan farklı olarak durum rengine göre
+// boyanabilmesi (aktif/potansiyel/pasif müşteri ayrımı bu sayede korunuyor).
 const PIN_SIZE = { width: 27, height: 36 } as const;
 const PIN_SIZE_SELECTED = { width: 35, height: 46 } as const;
 
@@ -39,7 +42,7 @@ function createPinIcon(color: string, selected: boolean) {
   const html = `
     <svg width="${width}" height="${height}" viewBox="0 0 27 36" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 2px 3px rgba(15,23,42,0.5))">
       <path d="M13.5 0C6.04 0 0 6.04 0 13.5c0 10.1 11.6 20.6 12.9 21.72a.9.9 0 0 0 1.2 0C15.4 34.1 27 23.6 27 13.5 27 6.04 20.96 0 13.5 0z" fill="${color}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
-      <circle cx="13.5" cy="13.5" r="5.5" fill="#ffffff"/>
+      <text x="13.5" y="14" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="11" fill="#ffffff">M</text>
     </svg>
   `;
   return L.divIcon({
