@@ -34,23 +34,37 @@ import { useGeolocation } from "@/lib/use-geolocation";
 // boyanabilmesi (aktif/potansiyel/pasif müşteri ayrımı bu sayede korunuyor).
 const PIN_SIZE = { width: 27, height: 36 } as const;
 const PIN_SIZE_SELECTED = { width: 35, height: 46 } as const;
+// Pin şekli, taban koordinat sisteminde (27x36) tam viewBox sınırlarına
+// değecek şekilde çizili. Kenar çizgisi (stroke) eklenince yarısı viewBox
+// dışına taşıp kırpılıyor, bu da özellikle üstteki oval kısımda "kesik"
+// görünüme yol açıyordu. Çözüm: viewBox'a görünmez bir pay ekleyip pin'i
+// bu payın içine kaydırmak; görünen pin boyutu PIN_SIZE ile aynı kalsın diye
+// render genişliği/yüksekliği de aynı oranda büyütülüyor.
+const BASE_PIN = { width: 27, height: 36 } as const;
+const STROKE_MARGIN = 3;
+const VIEWBOX_WIDTH = BASE_PIN.width + STROKE_MARGIN * 2;
+const VIEWBOX_HEIGHT = BASE_PIN.height + STROKE_MARGIN;
 
 function createPinIcon(color: string, selected: boolean) {
-  const { width, height } = selected ? PIN_SIZE_SELECTED : PIN_SIZE;
+  const target = selected ? PIN_SIZE_SELECTED : PIN_SIZE;
+  const renderWidth = (target.width / BASE_PIN.width) * VIEWBOX_WIDTH;
+  const renderHeight = (target.height / BASE_PIN.height) * VIEWBOX_HEIGHT;
   const stroke = selected ? "#1d4ed8" : "#ffffff";
   const strokeWidth = selected ? 3 : 2.5;
   const html = `
-    <svg width="${width}" height="${height}" viewBox="0 0 27 36" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 2px 3px rgba(15,23,42,0.5))">
-      <path d="M13.5 0C6.04 0 0 6.04 0 13.5c0 10.1 11.6 20.6 12.9 21.72a.9.9 0 0 0 1.2 0C15.4 34.1 27 23.6 27 13.5 27 6.04 20.96 0 13.5 0z" fill="${color}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
-      <text x="13.5" y="14" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="11" fill="#ffffff">M</text>
+    <svg width="${renderWidth}" height="${renderHeight}" viewBox="0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 2px 3px rgba(15,23,42,0.5))">
+      <g transform="translate(${STROKE_MARGIN}, ${STROKE_MARGIN})">
+        <path d="M13.5 0C6.04 0 0 6.04 0 13.5c0 10.1 11.6 20.6 12.9 21.72a.9.9 0 0 0 1.2 0C15.4 34.1 27 23.6 27 13.5 27 6.04 20.96 0 13.5 0z" fill="${color}" stroke="${stroke}" stroke-width="${strokeWidth}"/>
+        <text x="13.5" y="14" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="11" fill="#ffffff">M</text>
+      </g>
     </svg>
   `;
   return L.divIcon({
     html,
     className: "mapmarker-pin",
-    iconSize: [width, height],
-    iconAnchor: [width / 2, height],
-    popupAnchor: [0, -height + 6],
+    iconSize: [renderWidth, renderHeight],
+    iconAnchor: [renderWidth / 2, renderHeight],
+    popupAnchor: [0, -target.height + 6],
   });
 }
 
