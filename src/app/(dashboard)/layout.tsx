@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { NavBar } from "@/components/NavBar";
 import { LogoutButton } from "@/components/LogoutButton";
@@ -20,10 +21,18 @@ export default async function DashboardLayout({
     <div className="flex min-h-screen flex-col">
       <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 sm:gap-3 sm:px-6">
         <div className="flex min-w-0 items-center gap-3 sm:gap-6">
-          <span className="shrink-0 text-base font-bold text-slate-900">
-            <span className="sm:hidden">Mapos</span>
+          <Link
+            href="/"
+            className="flex shrink-0 items-center gap-2 text-base font-bold text-slate-900"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/icons/icon-192.png"
+              alt="Mapos"
+              className="h-8 w-8 shrink-0"
+            />
             <span className="hidden sm:inline">Mapos Bayi Rotası</span>
-          </span>
+          </Link>
           <div className="min-w-0 overflow-x-auto">
             <NavBar isAuthenticated={Boolean(session)} />
           </div>
