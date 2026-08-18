@@ -104,9 +104,12 @@ export function InstallPrompt() {
   return (
     <div className="fixed bottom-3 left-3 z-[1000] w-[calc(100vw-1.5rem)] max-w-xs rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white">
-          M
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/icons/icon-192.png"
+          alt=""
+          className="h-10 w-10 shrink-0 rounded-lg"
+        />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900">
             Mapos&apos;u uygulama olarak yükle
